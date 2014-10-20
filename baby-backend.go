@@ -27,8 +27,8 @@ func main() {
 	//Family
 	familyRepo := family.FamilyRepo {Collection: database.C("family")}
 	r.HandleFunc("/family/create", familyRepo.FamilyCreate).Methods("POST")
-	r.HandleFunc("/family/update", family.FamilyUpdate).Methods("POST")
-	// r.HandleFunc("/family/update", FamilyCreate).Methods("POST")
+	r.HandleFunc("/family/update", familyRepo.FamilyUpdate).Methods("POST")
+	r.HandleFunc("/family/all", familyRepo.FamilyAll).Methods("GET")
 	// r.HandleFunc("/family/child", FamilyCreate).Methods("POST")
 	// r.HandleFunc("/family/parent", FamilyCreate).Methods("POST")
 

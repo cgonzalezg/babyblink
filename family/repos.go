@@ -4,6 +4,8 @@ import (
 	mgo "gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 	"time"
+	"errors"
+	"log"
 )
 
 type (
@@ -12,42 +14,57 @@ type (
 	}
 )
 
-func (r FamilyRepo) All() (todos Family, err error) {
+func (r FamilyRepo) All() (todos []Family, err error) {
 	err = r.Collection.Find(bson.M{}).All(&todos)
 	return
 }
 
-func (r FamilyRepo) Create(todo *Family) (err bool) {
+func (r FamilyRepo) Create(fam *Family) (err error) {
+
+
+
 	query := bson.M{
-		"name": todo.Name,
+		"name": fam.Name,
 	}
-	query_response, _ := r.Collection.Find(query).Count()
+
+	log.Printf("name", fam.Name)
+
+	query_response, error := r.Collection.Find(query).Count()
+	if error != nil {
+		log.Printf("error query", fam.Name)
+	}
+	log.Println(query_response)
 	if (query_response < 1) {
-		if todo.Id.Hex() == "" {
-			todo.Id = bson.NewObjectId()
+		if fam.Id.Hex() == "" {
+			fam.Id = bson.NewObjectId()
 		}
-		if todo.Created.IsZero() {
-			todo.Created = time.Now()
+		if fam.Created.IsZero() {
+			fam.Created = time.Now()
 		}
-		todo.Updated = time.Now()
-		_, _ = r.Collection.UpsertId(todo.Id, todo)
-		return true
+		fam.Updated = time.Now()
+		_, err = r.Collection.UpsertId(fam.Id, fam)
+
+		if err != nil {
+			log.Println("error to insert")
+		}
+		return
 	}
-	return false
+	log.Printf("mierdaca")
+	err = errors.New("Not allow")
+	return err
 }
 
 func (r FamilyRepo) Update(todo *Family) (err error) {
 	var change = mgo.Change{
-ReturnNew: true,
-Update: bson.M{
-		"$set": bson.M{
-			"name": todo.Id,
-//			"d": todo.Due,
-//			"t": todo.Task,
-		}}}
-_, err = r.Collection.FindId(todo.Id).Apply(change, todo)
+		ReturnNew: true,
+		Update: bson.M{
+			"$set": bson.M{
+				"name": todo.Name,
+				"u": time.Now(),
+			}}}
+	_, err = r.Collection.FindId(todo.Id).Apply(change, todo)
 
-return
+	return
 }
 func (r FamilyRepo) Destroy(id string) (err error) {
 	bid := bson.ObjectIdHex(id)
