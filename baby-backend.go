@@ -11,24 +11,30 @@ import (
 var (
 	mongoSession *mgo.Session
 	database     *mgo.Database
+	familyLogic  *family.FamilyRepo
 )
 
-func main() {
+
+func initDB() {
 	var err error
-	r := mux.NewRouter()
-	//	r.HandleFunc("/", HomeHandler)
 	if mongoSession, err = mgo.Dial("admin:mongo@ds063769.mongolab.com:63769/baby"); err != nil {
 		panic(err)
 	}
 	log.Println("Connected to mongodb")
 
 	database = mongoSession.DB("baby")
-	//	repo.Collection = database.C("family")
+	familyLogic = &family.FamilyRepo {Collection: database.C("family")}
+}
+
+func main() {
+	r := mux.NewRouter()
+	initDB()
 	//Family
-	familyRepo := family.FamilyRepo {Collection: database.C("family")}
-	r.HandleFunc("/family/create", familyRepo.FamilyCreate).Methods("POST")
-	r.HandleFunc("/family/update", familyRepo.FamilyUpdate).Methods("POST")
-	r.HandleFunc("/family/all", familyRepo.FamilyAll).Methods("GET")
+	r.HandleFunc("/family/create", familyLogic.FamilyCreate).Methods("POST")
+	r.HandleFunc("/family/update", familyLogic.FamilyUpdate).Methods("POST")
+	r.HandleFunc("/family/all", familyLogic.FamilyAll).Methods("GET")
+
+
 	// r.HandleFunc("/family/child", FamilyCreate).Methods("POST")
 	// r.HandleFunc("/family/parent", FamilyCreate).Methods("POST")
 
