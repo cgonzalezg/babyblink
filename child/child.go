@@ -32,7 +32,7 @@ func (repo ChildRepo) create(child Child) error {
 	//check the family
 	query := bson.M{
 		"family_id": bson.ObjectIdHex(child.Family),
-		"name":
+		"name": child.Name,
 	}
 	exis, err := repo.Exist(query)
 	if exis && err != nil {
@@ -49,7 +49,7 @@ func (repo ChildRepo) ChildCreate(w http.ResponseWriter, r *http.Request) {
 		item Child
 	)
 	json.ReadJson(r, &item)
-	if err = repo.Create(&item); err == nil {
+	if err = repo.create(&item); err == nil {
 		log.Println(item.Created)
 		json.WriteJson(w, item)
 	}else {
@@ -73,18 +73,17 @@ func (repo ChildRepo) ChildAll(w http.ResponseWriter, r *http.Request) {
 }
 
 func (repo ChildRepo) ChildUpdate(w http.ResponseWriter, r *http.Request) {
-	var err error
-	var item Family
+	var (
+		item Child
+	)
 	json.ReadJson(r, &item)
-	if err = repo.Update(&item); err == nil {
-		log.Println(item.Created)
-		json.WriteJson(w, item)
-	}else {
-		w.WriteHeader(http.StatusMethodNotAllowed)
-		log.Println(err.Error())
-		io.WriteString(w, "Not allow, family already create")
+	if err := repo.Update(item); err != nil {
+		log.Printf("%v", err)
+		http.Error(w, "500 Internal Server Error", 500)
 		return
 	}
+	json.WriteJson(w, item)
+
 }
 
 
