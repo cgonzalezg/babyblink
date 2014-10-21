@@ -1,85 +1,65 @@
-package family
+package child
 
 import (
 	"gopkg.in/mgo.v2/bson"
 	"net/http"
 	"log"
-	"encoding/json"
 	"time"
-	"strconv"
-	//	"fmt"
 	"io"
-	"io/ioutil"
+	"src/babyblick-backend/repos"
+	json "src/babyblick-backend/deserialize"
+
+
+
 )
 
-type Family struct {
-	Id        bson.ObjectId `json:"id" bson:"_id"`
-	Name      string        `json:"name" bson:"name"`
-	Created   time.Time     `json:"c"            bson:"c"`
-	Updated   time.Time     `json:"u,omitempty"  bson:"u,omitempty"`
+type Child struct {
+	Id            bson.ObjectId    `json:"id" 			bson:"_id"`
+	Name          string           `json:"name" 		bson:"name"`
+	Family        bson.ObjectId    `json:"family" 		bson:"family_id"`
+	Birthday      time.Time        `json:"birthday"	bson:"birthday"`
+	Photo         string           `json:"photo"		bson:"photo"`
+	Created       time.Time        `json:"c"           bson:"c"`
+	Updated       time.Time        `json:"u,omitempty" bson:"u,omitempty"`
+
 }
 
-func writeJson(w http.ResponseWriter, v interface{}) {
-	// avoid json vulnerabilities, always wrap v in an object literal
-	doc := map[string]interface{}{"data": v}
-
-	if data, err := json.Marshal(doc); err != nil {
-		log.Printf("Error marshalling json: %v", err)
-	} else {
-		w.Header().Set("Content-Length", strconv.Itoa(len(data)))
-		w.Header().Set("Content-Type", "application/json")
-		w.Write(data)
-	}
+type ChildRepo struct {
+	Repo
 }
 
-func readJson(r *http.Request, v interface{}) bool {
-	defer r.Body.Close()
-
-	var (
-		body []byte
-		err  error
-	)
-
-	body, err = ioutil.ReadAll(r.Body)
-
-	if err != nil {
-		log.Printf("ReadJson couldn't read request body %v", err)
-		return false
+func (repo ChildRepo) create(child Child) error {
+	//check the family
+	query := bson.M{
+		"family_id": bson.ObjectIdHex(child.Family),
+		"name":
+	}
+	exis, err := repo.Exist(query)
+	if exis && err != nil {
+		err = repo.Update(child)
+		return err
 	}
 
-	if err = json.Unmarshal(body, v); err != nil {
-		log.Printf("ReadJson couldn't parse request body %v", err)
-		return false
-	}
-
-	return true
+	return err
 }
 
-func (repo FamilyRepo) FamilyCreate(w http.ResponseWriter, r *http.Request) {
+func (repo ChildRepo) ChildCreate(w http.ResponseWriter, r *http.Request) {
 	var (
 		err   error
+		item Child
 	)
-	decoder := json.NewDecoder(r.Body)
-	var family  map[string] string
-	err = decoder.Decode(&family)
-	if err != nil {
-		log.Println("error" + family["name"])
-	}
-	item := Family{ Id: bson.NewObjectId(), Name: family["name"]}
-	log.Println("print " + item.Name)
+	json.ReadJson(r, &item)
 	if err = repo.Create(&item); err == nil {
 		log.Println(item.Created)
-		writeJson(w, item)
+		json.WriteJson(w, item)
 	}else {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		io.WriteString(w, "Not allow, family already create")
 		return
 	}
-
-
 }
 
-func (repo FamilyRepo) FamilyAll(w http.ResponseWriter, r *http.Request) {
+func (repo ChildRepo) ChildAll(w http.ResponseWriter, r *http.Request) {
 	var (
 		families []Family
 		err   error
@@ -89,22 +69,22 @@ func (repo FamilyRepo) FamilyAll(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "500 Internal Server Error", 500)
 		return
 	}
-	writeJson(w, families)
-
+	json.WriteJson(w, families)
 }
 
-func (repo FamilyRepo) FamilyUpdate(w http.ResponseWriter, r *http.Request) {
+func (repo ChildRepo) ChildUpdate(w http.ResponseWriter, r *http.Request) {
 	var err error
 	var item Family
-	readJson(r, &item)
+	json.ReadJson(r, &item)
 	if err = repo.Update(&item); err == nil {
 		log.Println(item.Created)
-		writeJson(w, item)
+		json.WriteJson(w, item)
 	}else {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		log.Println(err.Error())
 		io.WriteString(w, "Not allow, family already create")
 		return
 	}
-
 }
+
+

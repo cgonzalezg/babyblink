@@ -20,9 +20,6 @@ func (r FamilyRepo) All() (todos []Family, err error) {
 }
 
 func (r FamilyRepo) Create(fam *Family) (err error) {
-
-
-
 	query := bson.M{
 		"name": fam.Name,
 	}
