@@ -11,6 +11,7 @@ import (
 
 
 
+	"net/http/cookiejar"
 )
 
 type Child struct {
@@ -21,7 +22,6 @@ type Child struct {
 	Photo         string           `json:"photo"		bson:"photo"`
 	Created       time.Time        `json:"c"           bson:"c"`
 	Updated       time.Time        `json:"u,omitempty" bson:"u,omitempty"`
-
 }
 
 type ChildRepo struct {
@@ -34,9 +34,11 @@ func (repo ChildRepo) create(child Child) error {
 		"family_id": bson.ObjectIdHex(child.Family),
 		"name": child.Name,
 	}
+	child.Created = time.Now()
+	child.Updated = time.Now()
 	exis, err := repo.Exist(query)
 	if exis && err != nil {
-		err = repo.Update(child)
+		err = repo.Update(child.id, child)
 		return err
 	}
 
@@ -61,15 +63,15 @@ func (repo ChildRepo) ChildCreate(w http.ResponseWriter, r *http.Request) {
 
 func (repo ChildRepo) ChildAll(w http.ResponseWriter, r *http.Request) {
 	var (
-		families []Family
+		childs []Child
 		err   error
 	)
-	if families, err = repo.All(); err != nil {
+	if childs, err = repo.All(); err != nil {
 		log.Printf("%v", err)
 		http.Error(w, "500 Internal Server Error", 500)
 		return
 	}
-	json.WriteJson(w, families)
+	json.WriteJson(w, childs)
 }
 
 func (repo ChildRepo) ChildUpdate(w http.ResponseWriter, r *http.Request) {
@@ -77,7 +79,8 @@ func (repo ChildRepo) ChildUpdate(w http.ResponseWriter, r *http.Request) {
 		item Child
 	)
 	json.ReadJson(r, &item)
-	if err := repo.Update(item); err != nil {
+	item.Updated = time.Now()
+	if err := repo.Update(item.Id, item); err != nil {
 		log.Printf("%v", err)
 		http.Error(w, "500 Internal Server Error", 500)
 		return
