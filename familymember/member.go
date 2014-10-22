@@ -25,7 +25,7 @@ type Member struct {
 }
 
 //HANDLERS
-func (repo MemberRepo) ParentCreate(w http.ResponseWriter, r *http.Request) {
+func (repo MemberRepo) Create(w http.ResponseWriter, r *http.Request) {
 	var (
 		err   error
 		item Member
@@ -41,7 +41,7 @@ func (repo MemberRepo) ParentCreate(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (repo MemberRepo) ParentAll(w http.ResponseWriter, r *http.Request) {
+func (repo MemberRepo) All(w http.ResponseWriter, r *http.Request) {
 	var (
 		families []Member
 		err   error
@@ -54,7 +54,7 @@ func (repo MemberRepo) ParentAll(w http.ResponseWriter, r *http.Request) {
 	json.WriteJson(w, families)
 }
 
-func (repo MemberRepo) ParentUpdate(w http.ResponseWriter, r *http.Request) {
+func (repo MemberRepo) Update(w http.ResponseWriter, r *http.Request) {
 	var (
 		item Member
 	)

@@ -25,7 +25,7 @@ type Event struct {
 }
 
 //HANDLERS
-func (repo EventRepo) EventCreate(w http.ResponseWriter, r *http.Request) {
+func (repo EventRepo) Create(w http.ResponseWriter, r *http.Request) {
 	var (
 		err   error
 		item Event
@@ -41,20 +41,20 @@ func (repo EventRepo) EventCreate(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (repo EventRepo) EventAll(w http.ResponseWriter, r *http.Request) {
+func (repo EventRepo) All(w http.ResponseWriter, r *http.Request) {
 	var (
-		families []Event
+		items []Event
 		err   error
 	)
-	if families, err = repo.all(); err != nil {
+	if items, err = repo.all(); err != nil {
 		log.Printf("%v", err)
 		http.Error(w, "500 Internal Server Error", 500)
 		return
 	}
-	json.WriteJson(w, families)
+	json.WriteJson(w, items)
 }
 
-func (repo EventRepo) EventUpdate(w http.ResponseWriter, r *http.Request) {
+func (repo EventRepo) Update(w http.ResponseWriter, r *http.Request) {
 	var (
 		item Event
 	)
