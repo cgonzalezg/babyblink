@@ -6,7 +6,6 @@ import (
 	"log"
 	"time"
 	"io"
-	"src/babyblick-backend/repos"
 	json "src/babyblick-backend/deserialize"
 
 
@@ -24,25 +23,6 @@ type Parent struct {
 
 }
 
-type ParentRepo struct {
-	Repo
-}
-
-func (repo ParentRepo) create(parent Parent) error {
-	//check the family
-	query := bson.M{
-		"family_id": bson.ObjectIdHex(parent.Family),
-		"name": parent.Name,
-	}
-
-	exis, err := repo.Exist(query)
-	if exis && err != nil {
-		err = repo.Update(parent.Id, parent)
-		return err
-	}
-
-	return err
-}
 
 func (repo ParentRepo) ParentCreate(w http.ResponseWriter, r *http.Request) {
 	var (
@@ -51,7 +31,6 @@ func (repo ParentRepo) ParentCreate(w http.ResponseWriter, r *http.Request) {
 	)
 	json.ReadJson(r, &item)
 	if err = repo.create(&item); err == nil {
-		log.Println(item.Created)
 		json.WriteJson(w, item)
 	}else {
 		w.WriteHeader(http.StatusMethodNotAllowed)
@@ -65,7 +44,7 @@ func (repo ParentRepo) ParentAll(w http.ResponseWriter, r *http.Request) {
 		families []Parent
 		err   error
 	)
-	if families, err = repo.All(); err != nil {
+	if families, err = repo.all(); err != nil {
 		log.Printf("%v", err)
 		http.Error(w, "500 Internal Server Error", 500)
 		return
@@ -78,7 +57,7 @@ func (repo ParentRepo) ParentUpdate(w http.ResponseWriter, r *http.Request) {
 		item Parent
 	)
 	json.ReadJson(r, &item)
-	if err := repo.Update(item.Id, item); err != nil {
+	if err := repo.update(&item); err != nil {
 		log.Printf("%v", err)
 		http.Error(w, "500 Internal Server Error", 500)
 		return

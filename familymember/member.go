@@ -6,51 +6,32 @@ import (
 	"log"
 	"time"
 	"io"
-	"src/babyblick-backend/repos"
-	json "src/babyblick-backend/deserialize"
+	json "babyblick-backend/deserialize"
 
 
 
 )
 
 type Member struct {
-	Id            bson.ObjectId        	`json:"id" 				bson:"_id"`
-	Name          string            	`json:"name" 			bson:"name"`
-	User          bson.ObjectId        	`json:"user" 			bson:"user_id"`
-	Birthday      time.Time            	`json:"birthday"		bson:"birthday"`
-	Photo         string            	`json:"photo"			bson:"photo"`
-	Created       time.Time            	`json:"c"           	bson:"c"`
-	Updated       time.Time        		`json:"u,omitempty" 	bson:"u,omitempty"`
-
+	Id            bson.ObjectId            `json:"id" 				bson:"_id"`
+	User          bson.ObjectId            `json:"user" 			bson:"user_id"`
+	Name          string                    `json:"name" 			bson:"name"`
+	Family        bson.ObjectId            `json:"family" 			bson:"family_id"`
+	Birthday      time.Time                `json:"birthday"		bson:"birthday"`
+	Photo         string                `json:"photo"			bson:"photo"`
+	Admin         bool                        `json:"admin" 	bson:"admin"`
+	Created       time.Time                `json:"c"           	bson:"c"`
+	Updated       time.Time                `json:"u,omitempty" 	bson:"u,omitempty"`
 }
 
-type MemberRepo struct {
-	Repo
-}
-
-func (repo MemberRepo) create(member Member) error {
-	//check the family
-	query := bson.M{
-		"family_id": bson.ObjectIdHex(member.Family),
-		"name": member.Name,
-	}
-
-	exis, err := repo.Exist(query)
-	if exis && err != nil {
-		err = repo.Update(member.Id, member)
-		return err
-	}
-
-	return err
-}
-
+//HANDLERS
 func (repo MemberRepo) ParentCreate(w http.ResponseWriter, r *http.Request) {
 	var (
 		err   error
 		item Member
 	)
 	json.ReadJson(r, &item)
-	if err = repo.create(&item); err == nil {
+	if err = repo.create(item); err == nil {
 		log.Println(item.Created)
 		json.WriteJson(w, item)
 	}else {
@@ -65,7 +46,7 @@ func (repo MemberRepo) ParentAll(w http.ResponseWriter, r *http.Request) {
 		families []Member
 		err   error
 	)
-	if families, err = repo.All(); err != nil {
+	if families, err = repo.all(); err != nil {
 		log.Printf("%v", err)
 		http.Error(w, "500 Internal Server Error", 500)
 		return
@@ -78,7 +59,7 @@ func (repo MemberRepo) ParentUpdate(w http.ResponseWriter, r *http.Request) {
 		item Member
 	)
 	json.ReadJson(r, &item)
-	if err := repo.Update(item.Id, item); err != nil {
+	if err := repo.update(&item); err != nil {
 		log.Printf("%v", err)
 		http.Error(w, "500 Internal Server Error", 500)
 		return
