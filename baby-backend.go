@@ -4,10 +4,10 @@ import (
 	"github.com/gorilla/mux"
 	mgo "gopkg.in/mgo.v2"
 	"net/http"
-	family "babyblick-backend/family"
-	event "babyblick-backend/event"
-	child "babyblick-backend/child"
-	member "babyblick-backend/familymember"
+	family "bitbucket.org/babyblick/babyblick-backend/family"
+	event "bitbucket.org/babyblick/babyblick-backend/event"
+	child "bitbucket.org/babyblick/babyblick-backend/child"
+	member "bitbucket.org/babyblick/babyblick-backend/familymember"
 	"log"
 )
 
