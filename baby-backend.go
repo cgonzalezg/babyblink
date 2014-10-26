@@ -9,6 +9,7 @@ import (
 	child "bitbucket.org/babyblick/babyblick-backend/child"
 	member "bitbucket.org/babyblick/babyblick-backend/familymember"
 	"log"
+	"os"
 )
 
 var (
@@ -62,5 +63,5 @@ func main() {
 
 	//	r.HandleFunc("/pictures", PictureHandler)
 	http.Handle("/", r)
-	http.ListenAndServe(":6969", nil)
+	http.ListenAndServe(":"+os.Getenv("PORT"), nil)
 }
