@@ -17,7 +17,6 @@ type ParentRepo struct {
 func (repo ParentRepo) create(member *Parent) error {
 	//check the family
 	query := bson.M{
-		"family_id": member.Family,
 		"name": member.Name,
 	}
 
@@ -25,7 +24,7 @@ func (repo ParentRepo) create(member *Parent) error {
 	if !exist && err != nil {
 		member.Created = time.Now()
 		member.Updated = time.Now()
-		err = repo.update(&member)
+		err = repo.update(member)
 		return err
 	}
 
