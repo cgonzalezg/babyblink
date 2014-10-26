@@ -38,6 +38,7 @@ func initDB() {
 func main() {
 	r := mux.NewRouter()
 	initDB()
+
 	//Family
 	r.HandleFunc("/family/create", familyLogic.FamilyCreate).Methods("POST")
 	r.HandleFunc("/family/update", familyLogic.FamilyUpdate).Methods("POST")
