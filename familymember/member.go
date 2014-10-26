@@ -6,7 +6,7 @@ import (
 	"log"
 	"time"
 	"io"
-	json "babyblick-backend/deserialize"
+	json "bitbucket.org/babyblick/babyblick-backend/deserialize"
 
 
 
@@ -67,5 +67,3 @@ func (repo MemberRepo) Update(w http.ResponseWriter, r *http.Request) {
 	json.WriteJson(w, item)
 
 }
-
-

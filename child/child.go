@@ -6,7 +6,7 @@ import (
 	"log"
 	"time"
 	"io"
-	json "babyblick-backend/deserialize"
+	json "bitbucket.org/babyblick/babyblick-backend/deserialize"
 )
 
 type Child struct {
@@ -65,5 +65,3 @@ func (repo ChildRepo) ChildUpdate(w http.ResponseWriter, r *http.Request) {
 	json.WriteJson(w, item)
 
 }
-
-
