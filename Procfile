@@ -1,1 +1,1 @@
-web: babyblick-backend -port 
+web: babyblick-backend
