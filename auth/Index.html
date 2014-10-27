@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<script src="https://cdn.auth0.com/w2/auth0-widget-5.js"></script>
+<body>
+<script type="text/javascript">
+    var widget = new Auth0Widget({
+        domain:                 'babyblick.auth0.com',
+        clientID:               'QNDKLh6sIfGEi1NgAJFNNXuvkqzVJsnm',
+        callbackURL:            'https://whispering-bayou-2307.herokuapp.com',
+        callbackOnLocationHash: true
+    });
+
+    var result = widget.parseHash(location.hash);
+    if (result && result.id_token) {
+        auth0.getProfile(result.id_token, function (err, profile) {
+          window.location.hash = "";
+          if (err) {
+            return alert('error fetching profile: ' + JSON.stringify(err));
+          }
+
+
+        });
+    }
+
+    widget.signin();
+</script>
+<button onclick="widget.signin({ scope: 'openid profile' })">Login</button>
+
+</body>
+</html>

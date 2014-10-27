@@ -1,15 +1,17 @@
 package main
 
 import (
+	"log"
+	"net/http"
+	"os"
+
+	auth "bitbucket.org/babyblick/babyblick-backend/auth"
+	child "bitbucket.org/babyblick/babyblick-backend/child"
+	event "bitbucket.org/babyblick/babyblick-backend/event"
+	family "bitbucket.org/babyblick/babyblick-backend/family"
+	member "bitbucket.org/babyblick/babyblick-backend/familymember"
 	"github.com/gorilla/mux"
 	mgo "gopkg.in/mgo.v2"
-	"net/http"
-	family "bitbucket.org/babyblick/babyblick-backend/family"
-	event "bitbucket.org/babyblick/babyblick-backend/event"
-	child "bitbucket.org/babyblick/babyblick-backend/child"
-	member "bitbucket.org/babyblick/babyblick-backend/familymember"
-	"log"
-	"os"
 )
 
 var (
@@ -29,10 +31,10 @@ func initDB() {
 	log.Println("Connected to mongodb")
 
 	database = mongoSession.DB("baby")
-	childLogic = &child.ChildRepo {Collection: database.C("child")}
-	eventLogic = &event.EventRepo {Collection: database.C("event")}
-	familyLogic = &family.FamilyRepo {Collection: database.C("family")}
-	memberLogic = &member.MemberRepo {Collection: database.C("familymember")}
+	childLogic = &child.ChildRepo{Collection: database.C("child")}
+	eventLogic = &event.EventRepo{Collection: database.C("event")}
+	familyLogic = &family.FamilyRepo{Collection: database.C("family")}
+	memberLogic = &member.MemberRepo{Collection: database.C("familymember")}
 
 }
 
@@ -40,7 +42,9 @@ func main() {
 	r := mux.NewRouter()
 	initDB()
 
+	r.HandleFunc("/", auth.Login).Methods("GET")
 	//Family
+
 	r.HandleFunc("/family/create", familyLogic.FamilyCreate).Methods("POST")
 	r.HandleFunc("/family/update", familyLogic.FamilyUpdate).Methods("POST")
 	r.HandleFunc("/family/all", familyLogic.FamilyAll).Methods("GET")
@@ -59,7 +63,6 @@ func main() {
 	r.HandleFunc("/member/create", memberLogic.Create).Methods("POST")
 	r.HandleFunc("/member/update", memberLogic.Update).Methods("POST")
 	r.HandleFunc("/member/all", memberLogic.All).Methods("GET")
-
 
 	//	r.HandleFunc("/pictures", PictureHandler)
 	http.Handle("/", r)
