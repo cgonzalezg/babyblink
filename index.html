@@ -6,8 +6,10 @@
     var widget = new Auth0Widget({
         domain:                 'babyblick.auth0.com',
         clientID:               'rlzj1WdHHXYWgoZJWRMT4yGhVIJZkKme',
-        callbackURL:            'https://whispering-bayou-2307.herokuapp.com/family/all',
-        callbackOnLocationHash: true
+        callbackURL:            'https://whispering-bayou-2307.herokuapp.com/auth',
+        // callbackURL:            'https://whispering-bayou-2307.herokuapp.com',
+
+        // callbackOnLocationHash: true
     });
 
     var result = widget.parseHash(location.hash);

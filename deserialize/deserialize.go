@@ -1,11 +1,11 @@
 package deserialize
 
 import (
-	"net/http"
-	"log"
 	"encoding/json"
-	"strconv"
 	"io/ioutil"
+	"log"
+	"net/http"
+	"strconv"
 )
 
 func WriteJson(w http.ResponseWriter, v interface{}) {
@@ -22,6 +22,29 @@ func WriteJson(w http.ResponseWriter, v interface{}) {
 }
 
 func ReadJson(r *http.Request, v interface{}) bool {
+	defer r.Body.Close()
+
+	var (
+		body []byte
+		err  error
+	)
+
+	body, err = ioutil.ReadAll(r.Body)
+
+	if err != nil {
+		log.Printf("ReadJson couldn't read request body %v", err)
+		return false
+	}
+
+	if err = json.Unmarshal(body, v); err != nil {
+		log.Printf("ReadJson couldn't parse request body %v", err)
+		return false
+	}
+
+	return true
+}
+
+func ReadJsonRes(r *http.Response, v interface{}) bool {
 	defer r.Body.Close()
 
 	var (

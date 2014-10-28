@@ -38,11 +38,24 @@ func initDB() {
 
 }
 
+func endPoints(w http.ResponseWriter, r *http.Request) {
+
+	// t := template.Must(template.ParseFiles("index.html"))
+
+	// fmt.Println("got:", r.URL.Query())
+
+	http.ServeFile(w, r, "index.html")
+
+}
+
 func main() {
 	r := mux.NewRouter()
 	initDB()
 
-	r.HandleFunc("/", auth.Login).Methods("GET")
+	r.HandleFunc("/auth", auth.Login).Methods("GET")
+
+	//endpoints url
+	r.HandleFunc("/", endPoints).Methods("GET")
 	//Family
 
 	r.HandleFunc("/family/create", familyLogic.FamilyCreate).Methods("POST")
