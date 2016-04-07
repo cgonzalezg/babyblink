@@ -1,5 +1,5 @@
 {
-	"ImportPath": "bitbucket.org/babyblick/babyblick-backend",
+	"ImportPath": "github.com/cgonzalezg/babyblick-backend",
 	"GoVersion": "go1.3.3",
 	"Deps": [
 		{

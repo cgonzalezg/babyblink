@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"net/url"
 
-	json "bitbucket.org/babyblick/babyblick-backend/deserialize"
+	json "github.com/cgonzalezg/babyblick-backend/deserialize"
 )
 
 type AccesToken struct {

@@ -5,11 +5,11 @@ import (
 	"net/http"
 	"os"
 
-	auth "bitbucket.org/babyblick/babyblick-backend/auth"
-	child "bitbucket.org/babyblick/babyblick-backend/child"
-	event "bitbucket.org/babyblick/babyblick-backend/event"
-	family "bitbucket.org/babyblick/babyblick-backend/family"
-	member "bitbucket.org/babyblick/babyblick-backend/familymember"
+	auth "github.com/cgonzalezg/babyblick-backend/auth"
+	child "github.com/cgonzalezg/babyblick-backend/child"
+	event "github.com/cgonzalezg/babyblick-backend/event"
+	family "github.com/cgonzalezg/babyblick-backend/family"
+	member "github.com/cgonzalezg/babyblick-backend/familymember"
 	"github.com/gorilla/mux"
 	mgo "gopkg.in/mgo.v2"
 )
