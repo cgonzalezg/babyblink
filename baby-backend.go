@@ -12,6 +12,7 @@ import (
 	member "github.com/cgonzalezg/babyblick-backend/familymember"
 	"github.com/gorilla/mux"
 	mgo "gopkg.in/mgo.v2"
+	"os"
 )
 
 var (
@@ -25,7 +26,7 @@ var (
 
 func initDB() {
 	var err error
-	if mongoSession, err = mgo.Dial("admin:mongo@ds063769.mongolab.com:63769/baby"); err != nil {
+	if mongoSession, err = mgo.Dial(os.Getenv("mongoUri")); err != nil {
 		panic(err)
 	}
 	log.Println("Connected to mongodb")
