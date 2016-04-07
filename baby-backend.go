@@ -12,7 +12,6 @@ import (
 	member "github.com/cgonzalezg/babyblick-backend/familymember"
 	"github.com/gorilla/mux"
 	mgo "gopkg.in/mgo.v2"
-	"os"
 )
 
 var (
